@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123d32">
+<title>Konekta África — MVP</title>
+<style>
+:root{--green:#123d32;--gold:#e9c46a;--bg:#f5f7f4;--muted:#68756e;--line:#dce4dd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:16px system-ui,-apple-system,Segoe UI,sans-serif;color:#17231c}
+header{background:var(--green);color:white;padding:22px max(18px,calc((100% - 980px)/2)) 26px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;background:var(--gold);color:var(--green);border-radius:14px;display:grid;place-items:center;font-size:25px;font-weight:900}
+h1{font-size:1.35rem;margin:0}.tag{font-size:.8rem;color:#d8e8d9;margin-top:3px}.hero{font-size:1.65rem;font-weight:800;margin:25px 0 6px}.sub{color:#e0e9e3;margin:0 0 18px}
+main{max-width:980px;margin:auto;padding:20px 16px 44px}.searchrow{display:flex;gap:10px;flex-wrap:wrap}.searchrow input{flex:1;min-width:180px}
+input,select,textarea,button{font:inherit;border-radius:10px;padding:12px;border:1px solid var(--line);background:white;color:#17231c}
+button{cursor:pointer;font-weight:650}.primary{background:var(--green);color:white;border-color:var(--green)}.gold{background:var(--gold);border-color:var(--gold);color:var(--green)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.chip{border-radius:999px;padding:9px 14px}.chip.active{background:var(--green);color:white;border-color:var(--green)}
+h2{font-size:1.15rem;margin:20px 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px}.emoji{font-size:25px}.meta{font-size:.85rem;color:var(--muted)}.price{font-weight:800;color:#176a45}.card h3{margin:0;font-size:1rem}.card p{margin:0;color:var(--muted);font-size:.92rem}.card button{margin-top:auto}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:24px}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:.85rem;font-weight:650}.field input,.field select,.field textarea{width:100%}
+.note{font-size:.82rem;color:var(--muted);line-height:1.5}.status{padding:12px;border-radius:10px;background:#edf5ee;color:#20583a;margin:12px 0;display:none}
+footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:.8rem}
+dialog{max-width:520px;width:calc(100% - 28px);border:0;border-radius:18px;padding:22px;box-shadow:0 15px 50px #0003}dialog::backdrop{background:#0006}.close{float:right}
+</style></head>
+<body>
+<header><div class="brand"><div class="logo">K</div><div><h1>Konekta África</h1><div class="tag">Oportunidades sem fronteiras</div></div></div><div class="hero">Encontra. Conecta. Cresce.</div><p class="sub">Produtos, serviços e oportunidades na Guiné-Bissau.</p><div class="searchrow"><input id="search" placeholder="Pesquisar produto, serviço ou cidade…"><button class="gold" id="searchBtn">Pesquisar</button></div></header>
+<main>
+<div class="toolbar" id="filters"><button class="chip active" data-cat="Todos">Todos</button><button class="chip" data-cat="Produtos">Produtos</button><button class="chip" data-cat="Serviços">Serviços</button><button class="chip" data-cat="Empregos">Empregos</button></div>
+<h2 id="listingTitle">Anúncios recentes</h2><div id="cards" class="grid"></div>
+<section class="panel"><h2>Publicar um anúncio</h2><p class="note">Esta versão guarda anúncios apenas neste navegador. Não publiques dados pessoais sensíveis. Os anúncios são públicos neste dispositivo.</p><div id="status" class="status"></div>
+<form id="adForm"><div class="fields">
+<div class="field"><label for="title">Título</label><input id="title" required maxlength="80" placeholder="Ex.: Reparação de telemóveis"></div>
+<div class="field"><label for="category">Categoria</label><select id="category"><option>Produtos</option><option>Serviços</option><option>Empregos</option></select></div>
+<div class="field"><label for="price">Preço / remuneração</label><input id="price" required maxlength="60" placeholder="Ex.: 5.000 FCFA ou a combinar"></div>
+<div class="field"><label for="city">Cidade / região</label><input id="city" required maxlength="60" value="Bissau"></div>
+<div class="field"><label for="contact">Contacto comercial (opcional)</label><input id="contact" maxlength="80" placeholder="Telefone ou email comercial"></div>
+<div class="field"><label for="description">Descrição</label><textarea id="description" rows="2" maxlength="400" placeholder="Detalhes úteis para os interessados"></textarea></div>
+</div><p><button class="primary" type="submit">Publicar anúncio</button></p></form></section>
+<section class="panel"><h2>Próxima etapa: tornar o serviço real</h2><p class="note">Para ter contas, anúncios partilhados entre dispositivos, moderação e recuperação de palavra-passe, será necessário ligar esta interface a um serviço de autenticação e base de dados. Esta versão ainda não tem servidor, contas reais, pagamentos nem publicação online.</p></section>
+</main><footer>Konekta África · Protótipo inicial · Guiné-Bissau</footer>
+<dialog id="details"><button class="close" id="close">Fechar ✕</button><div id="detailBody"></div></dialog>
+<script>
+const starter=[
+{id:1,title:"Telemóvel Android",category:"Produtos",price:"45.000 FCFA",city:"Bissau",description:"Exemplo de anúncio para demonstrar a plataforma.",contact:""},
+{id:2,title:"Eletricista profissional",category:"Serviços",price:"Preço a combinar",city:"Bissau",description:"Instalação e reparação elétrica. Exemplo ilustrativo.",contact:""},
+{id:3,title:"Vaga para vendedor",category:"Empregos",price:"Salário a combinar",city:"Bafatá",description:"Anúncio de demonstração; não representa uma vaga confirmada.",contact:""},
+{id:4,title:"Roupa tradicional",category:"Produtos",price:"10.000 FCFA",city:"Gabú",description:"Exemplo de anúncio de roupa tradicional.",contact:""}
+];
+let ads;try{ads=JSON.parse(localStorage.getItem("konekta_ads")||"null");if(!Array.isArray(ads))ads=starter}catch(e){ads=starter}
+let category="Todos";
+const icons={Produtos:"🛍️",Serviços:"🧰",Empregos:"💼"};
+function save(){try{localStorage.setItem("konekta_ads",JSON.stringify(ads))}catch(e){}}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){const q=document.querySelector("#search").value.trim().toLowerCase();const list=ads.filter(a=>(category==="Todos"||a.category===category)&&[a.title,a.city,a.description].join(" ").toLowerCase().includes(q));document.querySelector("#listingTitle").textContent=`Anúncios (${list.length})`;document.querySelector("#cards").innerHTML=list.length?list.map(a=>`<article class="card"><div class="emoji">${icons[a.category]||"📌"}</div><div class="meta">${esc(a.category)} · ${esc(a.city)}</div><h3>${esc(a.title)}</h3><div class="price">${esc(a.price)}</div><p>${esc(a.description||"Sem descrição.")}</p><button data-open="${a.id}">Ver anúncio</button></article>`).join(""):`<p>Não foram encontrados anúncios. Experimenta outra pesquisa.</p>`}
+document.querySelector("#filters").addEventListener("click",e=>{const b=e.target.closest("button[data-cat]");if(!b)return;category=b.dataset.cat;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));render()});
+document.querySelector("#search").addEventListener("input",render);document.querySelector("#searchBtn").addEventListener("click",render);
+document.querySelector("#cards").addEventListener("click",e=>{const b=e.target.closest("[data-open]");if(!b)return;const a=ads.find(x=>x.id===Number(b.dataset.open));if(!a)return;document.querySelector("#detailBody").innerHTML=`<div class="emoji">${icons[a.category]||"📌"}</div><div class="meta">${esc(a.category)} · ${esc(a.city)}</div><h2>${esc(a.title)}</h2><div class="price">${esc(a.price)}</div><p>${esc(a.description||"Sem descrição.")}</p>${a.contact?`<p><b>Contacto:</b> ${esc(a.contact)}</p>`:""}<p class="note">Confirma a identidade do anunciante antes de pagar. Este protótipo não verifica anúncios.</p>`;document.querySelector("#details").showModal()});
+document.querySelector("#close").addEventListener("click",()=>document.querySelector("#details").close());
+document.querySelector("#adForm").addEventListener("submit",e=>{e.preventDefault();const a={id:Date.now(),title:document.querySelector("#title").value.trim(),category:document.querySelector("#category").value,price:document.querySelector("#price").value.trim(),city:document.querySelector("#city").value.trim(),contact:document.querySelector("#contact").value.trim(),description:document.querySelector("#description").value.trim()};if(!a.title||!a.price||!a.city)return;ads.unshift(a);save();e.target.reset();document.querySelector("#city").value="Bissau";category="Todos";document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x.dataset.cat==="Todos"));document.querySelector("#search").value="";render();const s=document.querySelector("#status");s.textContent="Anúncio adicionado neste navegador.";s.style.display="block";setTimeout(()=>s.style.display="none",3500)});
+render();
+</script></body></html>
